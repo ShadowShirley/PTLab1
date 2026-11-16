@@ -57,3 +57,4 @@ def test_main_with_yaml(tmpdir, monkeypatch, capsys) -> None:
     out = capsys.readouterr().out
     assert "Иванов Иван" in out
     assert "85.0" in out
+    assert "Number of excellent students:  0" in out
