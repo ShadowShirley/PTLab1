@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
 import sys
 
 from CalcRating import CalcRating
+from DataReader import DataReader
 from TextDataReader import TextDataReader
+from YAMLDataReader import YAMLDataReader
+
+
+READERS: dict[str, type[DataReader]] = {
+    ".txt": TextDataReader,
+    ".yaml": YAMLDataReader,
+    ".yml": YAMLDataReader,
+}
 
 
 def get_path_from_arguments(args) -> str:
@@ -14,10 +24,17 @@ def get_path_from_arguments(args) -> str:
     return args.path
 
 
+def get_reader(path: str) -> DataReader:
+    extension = os.path.splitext(path)[1].lower()
+    if extension not in READERS:
+        raise ValueError(f"Unsupported file format: '{extension}'")
+    return READERS[extension]()
+
+
 def main():
     path = get_path_from_arguments(sys.argv[1:])
 
-    reader = TextDataReader()
+    reader = get_reader(path)
     students = reader.read(path)
     print("Students: ", students)
 
